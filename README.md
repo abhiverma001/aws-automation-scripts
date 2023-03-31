@@ -9,7 +9,7 @@ pip install awscli boto3
 ## Export AWS Auto Scaling Groups Namws and Tags in to CSV file.
 - We can achive this by below python boto3 script
 - Recommended to user AWS CloudShell for this kind of work
-- Create a file 'export_asg_tags_csv.py' and write the below script in this file
+- Create a file 'export_asg_tags_csv.py' and write the below script in this file (export_asg_tags_csv.py)
 ```
 import boto3
 import csv
