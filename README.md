@@ -50,3 +50,33 @@ python3 script_file_name.py
 ```
 - A CSV file will be created in the same directory.
 
+
+## Export AWS AMI Details in a CSV file.
+- We can achive this by below python boto3 script
+- This script retrieves all the AMIs that are owned by your AWS account (specified by Owners=['self'] in the describe_images() method), and then writes the relevant details to a CSV file named ami_details.csv. You can modify the fieldnames list to include additional details about the AMIs if needed.
+```
+import boto3
+import csv
+
+client = boto3.client('ec2')
+
+# Retrieve all available AMIs
+response = client.describe_images(Owners=['self'])
+
+# Extract the relevant details and write to CSV
+with open('ami_details.csv', mode='w', newline='') as csv_file:
+    fieldnames = ['ImageId', 'Name', 'CreationDate', 'VirtualizationType', 'State']
+    writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+    writer.writeheader()
+
+    for image in response['Images']:
+        writer.writerow({'ImageId': image['ImageId'], 
+                         'Name': image['Name'], 
+                         'CreationDate': image['CreationDate'], 
+                         'VirtualizationType': image['VirtualizationType'], 
+                         'State': image['State']})
+
+```
+- A csv file will be created named 'ami_details.csv'.
+
+
