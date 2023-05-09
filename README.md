@@ -6,7 +6,7 @@
 pip install awscli boto3
 ```
 
-## Export AWS Auto Scaling Groups Name and Tags in a CSV file.
+## ~ Export AWS Auto Scaling Groups Name and Tags in a CSV file.
 - We can achive this by below python boto3 script
 - Recommended to user AWS CloudShell for this kind of work
 - Create a file [export_asg_tags_csv.py](https://github.com/abhiverma001/aws-automation-scripts/blob/main/export_asg_tags_csv.py) and write the below script in this file.
@@ -51,7 +51,7 @@ python3 script_file_name.py
 - A CSV file will be created in the same directory.
 
 
-## Export AWS AMI Details in a CSV file.
+## ~ Export AWS AMI Details in a CSV file.
 - We can achive this by below python boto3 script
 - This script retrieves all the AMIs that are owned by your AWS account (specified by Owners=['self'] in the describe_images() method), and then writes the relevant details to a CSV file named ami_details.csv. You can modify the fieldnames list to include additional details about the AMIs if needed.
 ```
@@ -79,4 +79,48 @@ with open('ami_details.csv', mode='w', newline='') as csv_file:
 ```
 - A csv file will be created named 'ami_details.csv'.
 
+## ~ Export Instances Details into CSV File.
+```
+import boto3
+import csv
+
+# Create an EC2 client
+ec2 = boto3.client('ec2')
+
+# Retrieve all running instances
+instances = ec2.describe_instances(Filters=[
+    {
+        'Name': 'instance-state-name',
+        'Values': ['running', 'stopped']
+    }
+])['Reservations']
+
+# Create a CSV file and write the headers
+with open('instance_details.csv', 'w', newline='') as csvfile:
+    fieldnames = ['InstanceId', 'InstanceName', 'InstanceType', 'InstanceState', 'Region']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    writer.writeheader()
+
+    # Write each instance's details to the CSV file
+    for instance in instances:
+        instance_data = instance['Instances'][0]
+        instance_id = instance_data['InstanceId']
+        instance_type = instance_data['InstanceType']
+        instance_state = instance_data['State']['Name']
+        region = ec2.meta.region_name
+        instance_name = [tag['Value'] for tag in instance_data['Tags'] if tag['Key'] == 'Name']
+        instance_name = instance_name[0] if instance_name else ''
+
+        # Write the instance's details to the CSV file
+        writer.writerow({
+            'InstanceId': instance_id,
+            'InstanceName': instance_name,
+            'InstanceType': instance_type,
+            'InstanceState': instance_state,
+            'Region': region
+        })
+
+print('Instance details exported to instance_details.csv')
+
+```
 
